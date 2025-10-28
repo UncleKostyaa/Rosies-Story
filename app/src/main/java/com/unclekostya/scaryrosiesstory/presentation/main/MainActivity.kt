@@ -49,6 +49,7 @@ import com.unclekostya.scaryrosiesstory.data.repository.StoryRepositoryImpl
 import com.unclekostya.scaryrosiesstory.presentation.navigation.NavGraph
 import com.unclekostya.scaryrosiesstory.presentation.story.StoryViewModel
 import com.unclekostya.scaryrosiesstory.presentation.viewmodel.CatalogViewModel
+import com.unclekostya.scaryrosiesstory.presentation.viewmodel.CatalogViewModelFactory
 import com.unclekostya.scaryrosiesstory.presentation.viewmodel.StoryViewModelFactory
 
 class MainActivity : ComponentActivity() {
@@ -79,7 +80,7 @@ class MainActivity : ComponentActivity() {
             val storyViewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(repository))
 
             //viewModel для ВСЕХ переписок
-            val catalogViewModel: CatalogViewModel = viewModel(factory = StoryViewModelFactory(repository))
+            val catalogViewModel: CatalogViewModel = viewModel(factory = CatalogViewModelFactory(repository))
 
             ScaryRosiesStoryTheme {
                 Scaffold(

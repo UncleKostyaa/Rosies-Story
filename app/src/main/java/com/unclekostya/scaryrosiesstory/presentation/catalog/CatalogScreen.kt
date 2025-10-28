@@ -40,9 +40,9 @@ fun CatalogScreen(
         val storyList by catalogViewModel.stories
 
         storyList.forEach { it ->
-            Text(text = it.title)
+            Text(text = it.title, color = Color.White)
+            Text(text = it.description, color = Color.White)
             Spacer(modifier = modifier.padding(10.dp))
-            Text(text = it.description)
         }
 
     }
