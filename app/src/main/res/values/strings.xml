@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">ScaryRosiesStory</string>
+    <string name="app_name">Страшилки Рози</string>
+    <string name="topbar_catalog_name">Библиотека историй</string>
 </resources>
