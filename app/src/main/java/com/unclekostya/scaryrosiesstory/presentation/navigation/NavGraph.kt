@@ -8,14 +8,19 @@ import com.unclekostya.scaryrosiesstory.presentation.catalog.CatalogScreen
 import com.unclekostya.scaryrosiesstory.presentation.chat.ChatScreen
 import com.unclekostya.scaryrosiesstory.presentation.profile.ProfileScreen
 import com.unclekostya.scaryrosiesstory.presentation.settings.SettingsScreen
+import com.unclekostya.scaryrosiesstory.presentation.story.StoryViewModel
 
 @Composable
 fun NavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    storyViewModel: StoryViewModel
 ) {
     NavHost(navController = navController,startDestination = "catalog") {
         composable("catalog") {
-            CatalogScreen()
+            CatalogScreen(
+                storyViewModel = storyViewModel,
+                navController = navController
+            )
         }
         composable("settings") {
             SettingsScreen()

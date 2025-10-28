@@ -24,10 +24,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,12 +38,18 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.unclekostya.scaryrosiesstory.ui.theme.ScaryRosiesStoryTheme
 import com.unclekostya.scaryrosiesstory.R
+import com.unclekostya.scaryrosiesstory.data.local.database.StoryDatabase
+import com.unclekostya.scaryrosiesstory.data.repository.StoryRepository
+import com.unclekostya.scaryrosiesstory.data.repository.StoryRepositoryImpl
 import com.unclekostya.scaryrosiesstory.presentation.navigation.NavGraph
+import com.unclekostya.scaryrosiesstory.presentation.story.StoryViewModel
+import com.unclekostya.scaryrosiesstory.presentation.viewmodel.StoryViewModelFactory
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -55,10 +63,18 @@ class MainActivity : ComponentActivity() {
             val roboticFamily = FontFamily(
                 Font(R.font.robotic_bold, FontWeight.Bold)
             )
+            //навигация
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
             val routes = listOf("catalog","profile","settings")
+
+            //база данных
+            val db = StoryDatabase.getDatabase(context = LocalContext.current)
+            val dao = db.storyDao()
+            val repository = StoryRepositoryImpl(dao)
+            val storyViewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(repository))
+
             ScaryRosiesStoryTheme {
                 Scaffold(
                     topBar = {
@@ -103,7 +119,10 @@ class MainActivity : ComponentActivity() {
                         .verticalScroll(rememberScrollState()),
                         color = colorResource(R.color.grey_catalog_color)
                     ) {
-                        NavGraph(navController)
+                        NavGraph(
+                            navController = navController,
+                            storyViewModel = storyViewModel
+                        )
                     }
                 }
             }
