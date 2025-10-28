@@ -17,4 +17,12 @@ interface StoryRepository {
     suspend fun getUserProgress(storyId: Int): UserProgressEntity?
 
     suspend fun saveProgress(progress: UserProgressEntity)
+
+    suspend fun insertStory(story: StoryEntity)
+
+    suspend fun insertMessage(message: MessageEntity)
+
+    suspend fun insertChoices(choices: ChoiceEntity)
+
+    suspend fun  insertUserProgress(userProgress: UserProgressEntity)
 }

@@ -25,4 +25,16 @@ interface StoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveProgress(progress: UserProgressEntity)
+
+    @Insert
+    suspend fun insertStory(story: StoryEntity)
+
+    @Insert
+    suspend fun insertMessage(message: MessageEntity)
+
+    @Insert
+    suspend fun insertChoices(choices: ChoiceEntity)
+
+    @Insert
+    suspend fun insertUserProgress(userProgress: UserProgressEntity)
 }

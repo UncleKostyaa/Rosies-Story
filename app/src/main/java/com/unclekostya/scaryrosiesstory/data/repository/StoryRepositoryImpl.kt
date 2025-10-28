@@ -33,4 +33,20 @@ class StoryRepositoryImpl(private val storyDao: StoryDao) : StoryRepository {
     override suspend fun saveProgress(progress: UserProgressEntity) {
         return  storyDao.saveProgress(progress = progress)
     }
+
+    override suspend fun insertStory(story: StoryEntity) {
+        return storyDao.insertStory(story = story)
+    }
+
+    override suspend fun insertMessage(message: MessageEntity) {
+        return  storyDao.insertMessage(message = message)
+    }
+
+    override suspend fun insertChoices(choices: ChoiceEntity) {
+        return storyDao.insertChoices(choices = choices)
+    }
+
+    override suspend fun insertUserProgress(userProgress: UserProgressEntity) {
+        return storyDao.insertUserProgress(userProgress = userProgress)
+    }
 }

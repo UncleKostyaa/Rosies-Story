@@ -10,5 +10,4 @@ data class MessageEntity(
     val sender: String,
     val text: String,
     val nextMessageId: Int?,
-    val branchGroup: List<ChoiceEntity>
 )

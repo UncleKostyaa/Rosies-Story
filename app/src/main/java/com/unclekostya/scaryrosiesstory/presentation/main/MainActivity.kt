@@ -1,6 +1,5 @@
 package com.unclekostya.scaryrosiesstory.presentation.main
 
-import android.app.FragmentManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -49,6 +48,7 @@ import com.unclekostya.scaryrosiesstory.data.repository.StoryRepository
 import com.unclekostya.scaryrosiesstory.data.repository.StoryRepositoryImpl
 import com.unclekostya.scaryrosiesstory.presentation.navigation.NavGraph
 import com.unclekostya.scaryrosiesstory.presentation.story.StoryViewModel
+import com.unclekostya.scaryrosiesstory.presentation.viewmodel.CatalogViewModel
 import com.unclekostya.scaryrosiesstory.presentation.viewmodel.StoryViewModelFactory
 
 class MainActivity : ComponentActivity() {
@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
             val roboticFamily = FontFamily(
                 Font(R.font.robotic_bold, FontWeight.Bold)
             )
+
             //навигация
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -73,7 +74,12 @@ class MainActivity : ComponentActivity() {
             val db = StoryDatabase.getDatabase(context = LocalContext.current)
             val dao = db.storyDao()
             val repository = StoryRepositoryImpl(dao)
+
+            //viewModel для ОТДЕЛЬНОЙ переписки
             val storyViewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(repository))
+
+            //viewModel для ВСЕХ переписок
+            val catalogViewModel: CatalogViewModel = viewModel(factory = StoryViewModelFactory(repository))
 
             ScaryRosiesStoryTheme {
                 Scaffold(
@@ -121,7 +127,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavGraph(
                             navController = navController,
-                            storyViewModel = storyViewModel
+                            storyViewModel = storyViewModel,
+                            catalogViewModel = catalogViewModel
                         )
                     }
                 }

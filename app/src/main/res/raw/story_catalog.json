@@ -1,0 +1,118 @@
+{
+  "stories": [
+    {
+      "story": {
+        "id": 1,
+        "title": "Rosie's Story",
+        "description": "You receive a strange message from an unknown number late at night...",
+        "coverPath": "covers/rosie_cover.png"
+      },
+      "messages": [
+        {
+          "id": 1,
+          "storyId": 1,
+          "sender": "rosie",
+          "text": "Hey... are you still awake?",
+          "nextMessageId": 2
+        },
+        {
+          "id": 2,
+          "storyId": 1,
+          "sender": "player",
+          "text": "Who is this?",
+          "nextMessageId": 3
+        },
+        {
+          "id": 3,
+          "storyId": 1,
+          "sender": "rosie",
+          "text": "It’s Rosie... something’s outside my window.",
+          "nextMessageId": null
+        },
+        {
+          "id": 4,
+          "storyId": 1,
+          "sender": "player",
+          "text": "What should I do?",
+          "nextMessageId": null
+        }
+      ],
+      "choices": [
+        {
+          "id": 1,
+          "messageId": 3,
+          "text": "Tell her to hide",
+          "nextMessageId": 4
+        },
+        {
+          "id": 2,
+          "messageId": 3,
+          "text": "Ask what she sees",
+          "nextMessageId": 4
+        }
+      ],
+      "userProgress": {
+        "storyId": 1,
+        "currentMessageId": 1,
+        "lastChoiceId": null
+      }
+    },
+    {
+        "story": {
+        "id": 2,
+        "title": "Rosie's Story",
+        "description": "You receive a strange message from an unknown number late at night...",
+        "coverPath": "covers/rosie_cover.png"
+      },
+      "messages": [
+        {
+          "id": 1,
+          "storyId": 1,
+          "sender": "rosie",
+          "text": "Hey... are you still awake?",
+          "nextMessageId": 2
+        },
+        {
+          "id": 2,
+          "storyId": 1,
+          "sender": "player",
+          "text": "Who is this?",
+          "nextMessageId": 3
+        },
+        {
+          "id": 3,
+          "storyId": 1,
+          "sender": "rosie",
+          "text": "It’s Rosie... something’s outside my window.",
+          "nextMessageId": null
+        },
+        {
+          "id": 4,
+          "storyId": 1,
+          "sender": "player",
+          "text": "What should I do?",
+          "nextMessageId": null
+        }
+      ],
+      "choices": [
+        {
+          "id": 1,
+          "messageId": 3,
+          "text": "Tell her to hide",
+          "nextMessageId": 4
+        },
+        {
+          "id": 2,
+          "messageId": 3,
+          "text": "Ask what she sees",
+          "nextMessageId": 4
+        }
+      ],
+      "userProgress": {
+        "storyId": 1,
+        "currentMessageId": 1,
+        "lastChoiceId": null
+      }
+    }
+  ]
+}
