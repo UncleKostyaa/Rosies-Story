@@ -9,7 +9,11 @@ plugins {
 android {
     namespace = "com.unclekostya.scaryrosiesstory"
     compileSdk = 36
-
+    packaging{
+        resources{
+            excludes += "dump_syms/**"
+        }
+    }
     defaultConfig {
         applicationId = "com.unclekostya.scaryrosiesstory"
         minSdk = 24
@@ -56,10 +60,10 @@ dependencies {
     implementation(libs.androidx.ui.text)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.6")
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.foundation)
-    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,9 +74,9 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")//1 0 1
+    implementation("io.coil-kt:coil-compose:2.7.0")//2 6 0
+    implementation("com.google.code.gson:gson:2.13.2")//2 10 1
 
 
 }

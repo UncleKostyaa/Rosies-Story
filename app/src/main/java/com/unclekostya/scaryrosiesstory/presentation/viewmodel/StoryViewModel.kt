@@ -108,8 +108,6 @@ class StoryViewModel(
             }
         }
     }
-
-
     fun sendPendingPlayerMessage() {
         viewModelScope.launch {
             val s = _uiState.value
