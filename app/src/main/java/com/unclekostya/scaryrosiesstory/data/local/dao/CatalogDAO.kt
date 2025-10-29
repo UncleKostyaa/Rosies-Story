@@ -23,6 +23,9 @@ interface StoryDao {
     @Query("SELECT * FROM user_progress WHERE storyId = :storyId LIMIT 1")
     suspend fun getProgress(storyId: Int): UserProgressEntity?
 
+    @Query("DELETE FROM user_progress WHERE storyId = :storyId")
+    suspend fun deleteProgressByStoryId(storyId: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveProgress(progress: UserProgressEntity)
 

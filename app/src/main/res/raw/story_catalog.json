@@ -58,61 +58,76 @@
       }
     },
     {
-        "story": {
+      "story": {
         "id": 2,
-        "title": "Rosie's Story",
-        "description": "You receive a strange message from an unknown number late at night...",
-        "coverPath": "covers/rosie_cover.png"
+        "title": "The Silent Call",
+        "description": "Your phone rings at midnight. The number has no name, but the voice on the other end seems to know you...",
+        "coverPath": "covers/silent_call.png"
       },
       "messages": [
         {
           "id": 1,
-          "storyId": 1,
-          "sender": "rosie",
-          "text": "Hey... are you still awake?",
+          "storyId": 2,
+          "sender": "unknown",
+          "text": "…Can you hear me?",
           "nextMessageId": 2
         },
         {
           "id": 2,
-          "storyId": 1,
+          "storyId": 2,
           "sender": "player",
           "text": "Who is this?",
           "nextMessageId": 3
         },
         {
           "id": 3,
-          "storyId": 1,
-          "sender": "rosie",
-          "text": "It’s Rosie... something’s outside my window.",
-          "nextMessageId": null
+          "storyId": 2,
+          "sender": "unknown",
+          "text": "Don’t hang up. They’ll know where you are.",
+          "nextMessageId": 4
         },
         {
           "id": 4,
-          "storyId": 1,
+          "storyId": 2,
           "sender": "player",
-          "text": "What should I do?",
+          "text": "What are you talking about?",
+          "nextMessageId": 5
+        },
+        {
+          "id": 5,
+          "storyId": 2,
+          "sender": "unknown",
+          "text": "Look outside your window. Tell me what you see.",
+          "nextMessageId": null
+        },
+        {
+          "id": 6,
+          "storyId": 2,
+          "sender": "player",
+          "text": "I see… someone standing there.",
           "nextMessageId": null
         }
       ],
       "choices": [
         {
           "id": 1,
-          "messageId": 3,
-          "text": "Tell her to hide",
-          "nextMessageId": 4
+          "messageId": 5,
+          "text": "Do as they say and look outside",
+          "nextMessageId": 6
         },
         {
           "id": 2,
-          "messageId": 3,
-          "text": "Ask what she sees",
-          "nextMessageId": 4
+          "messageId": 5,
+          "text": "Refuse and hang up the call",
+          "nextMessageId": null
         }
       ],
       "userProgress": {
-        "storyId": 1,
+        "storyId": 2,
         "currentMessageId": 1,
         "lastChoiceId": null
       }
     }
+
   ]
 }

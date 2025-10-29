@@ -49,4 +49,8 @@ class StoryRepositoryImpl(private val storyDao: StoryDao) : StoryRepository {
     override suspend fun insertUserProgress(userProgress: UserProgressEntity) {
         return storyDao.insertUserProgress(userProgress = userProgress)
     }
+
+    override  suspend fun deleteUserProgress(storyId: Int) {
+        return storyDao.deleteProgressByStoryId(storyId)
+    }
 }

@@ -10,7 +10,7 @@ interface StoryRepository {
 
     suspend fun getAllStories(): List<StoryEntity>
 
-    suspend fun getMessage(storyId: Int, messageId: Int): MessageEntity
+    suspend fun getMessage(storyId: Int, messageId: Int): MessageEntity?
 
     suspend fun getChoicesForMessage(messageId: Int): List<ChoiceEntity>
 
@@ -25,4 +25,6 @@ interface StoryRepository {
     suspend fun insertChoices(choices: ChoiceEntity)
 
     suspend fun  insertUserProgress(userProgress: UserProgressEntity)
+
+    suspend fun deleteUserProgress(storyId: Int)
 }

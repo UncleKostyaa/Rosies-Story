@@ -14,6 +14,7 @@ import com.unclekostya.scaryrosiesstory.data.local.entity.UserProgressEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -40,8 +41,7 @@ abstract class StoryDatabase: RoomDatabase() {
 class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callback() {
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
-
-        CoroutineScope(Dispatchers.IO).launch {
+        runBlocking {
             prePopulateStory(context)
         }
     }

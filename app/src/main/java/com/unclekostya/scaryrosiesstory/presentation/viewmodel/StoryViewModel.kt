@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class ChatUiState(
-    val messages: List<MessageEntity> = emptyList(),
+    val messages: List<MessageEntity?> = emptyList(),
     val choices: List<ChoiceEntity> = emptyList(),
     val currentStoryId: Int? = null,
     val isLoading: Boolean = false,
@@ -31,12 +31,26 @@ class StoryViewModel(
                 _uiState.value = _uiState.value.copy(isLoading = true)
 
                 val progress = repository.getUserProgress(storyId)
-                val startMessageId = progress?.currentMessageId ?: 1
-                val message = repository.getMessage(storyId, startMessageId)
-                val choices = repository.getChoicesForMessage(startMessageId)
+                var currentMessageId = progress?.currentMessageId ?: 1
+                val messages = mutableListOf<MessageEntity>()
+                var choices: List<ChoiceEntity> = emptyList()
 
+                while (true) {
+                    val message =
+                        repository.getMessage(storyId = storyId, messageId = currentMessageId)
+                    if (message == null) break
+
+                    messages += message
+
+                    choices = repository.getChoicesForMessage(currentMessageId)
+                    if (choices.isNotEmpty()) break
+
+                    val nextMessageId = message.nextMessageId
+                    if(nextMessageId == null) break
+                    currentMessageId = nextMessageId
+                }
                 _uiState.value = ChatUiState(
-                    messages = listOf(message),
+                    messages = messages,
                     choices = choices,
                     currentStoryId = storyId,
                     isLoading = false
@@ -75,7 +89,18 @@ class StoryViewModel(
         }
     }
 
-    fun resetStory() {
-        _uiState.value = ChatUiState()
+    fun resetStory(storyId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.deleteUserProgress(storyId)
+                _uiState.value = ChatUiState()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = e.message
+                )
+            }
+        }
+
+
     }
 }

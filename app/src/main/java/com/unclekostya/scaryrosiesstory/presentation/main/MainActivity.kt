@@ -82,23 +82,27 @@ class MainActivity : ComponentActivity() {
             //viewModel для ВСЕХ переписок
             val catalogViewModel: CatalogViewModel = viewModel(factory = CatalogViewModelFactory(repository))
 
+            val showTopBar = currentRoute != "chat"
+
             ScaryRosiesStoryTheme {
                 Scaffold(
                     topBar = {
-                        CenterAlignedTopAppBar(
-                            title = {
-                                Text(
-                                    text = stringResource(R.string.topbar_catalog_name),
-                                    fontFamily = comfortaFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 28.sp
+                        if(showTopBar) {
+                            CenterAlignedTopAppBar(
+                                title = {
+                                    Text(
+                                        text = stringResource(R.string.topbar_catalog_name),
+                                        fontFamily = comfortaFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 28.sp
+                                    )
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = colorResource(R.color.topbottombars_content_color),
+                                    titleContentColor = colorResource(R.color.white)
                                 )
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = colorResource(R.color.topbottombars_content_color),
-                                titleContentColor = colorResource(R.color.white)
                             )
-                        )
+                        }
                     },
                     bottomBar = {
                         BottomAppBar (
@@ -129,7 +133,8 @@ class MainActivity : ComponentActivity() {
                         NavGraph(
                             navController = navController,
                             storyViewModel = storyViewModel,
-                            catalogViewModel = catalogViewModel
+                            catalogViewModel = catalogViewModel,
+                            currentRoute = currentRoute
                         )
                     }
                 }
