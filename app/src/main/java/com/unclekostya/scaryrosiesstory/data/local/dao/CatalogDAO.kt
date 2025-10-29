@@ -1,43 +1,45 @@
 package com.unclekostya.scaryrosiesstory.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import com.unclekostya.scaryrosiesstory.data.local.entity.ChoiceEntity
-import com.unclekostya.scaryrosiesstory.data.local.entity.MessageEntity
-import com.unclekostya.scaryrosiesstory.data.local.entity.StoryEntity
-import com.unclekostya.scaryrosiesstory.data.local.entity.UserProgressEntity
+import androidx.room.*
+import com.unclekostya.scaryrosiesstory.data.local.entity.*
 
 @Dao
 interface StoryDao {
+
+    // ---- Stories ----
     @Query("SELECT * FROM stories")
     suspend fun getAllStories(): List<StoryEntity>
 
-    @Query("SELECT * FROM messages WHERE storyId = :storyId AND id = :messageId")
-    suspend fun getMessage(storyId:Int,messageId:Int): MessageEntity
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStory(story: StoryEntity): Long
 
-    @Query("SELECT * FROM choices WHERE messageId = :messageId")
-    suspend fun getChoicesForMessage(messageId: Int): List<ChoiceEntity>
+    // ---- Messages ----
+    @Query("SELECT * FROM messages WHERE id = :messageDbId AND storyId = :storyId LIMIT 1")
+    suspend fun getMessageByDbId(storyId: Int, messageDbId: Int): MessageEntity?
 
+    @Query("SELECT * FROM messages WHERE storyId = :storyId AND localId = :localId LIMIT 1")
+    suspend fun getMessageByLocalId(storyId: Int, localId: Int): MessageEntity?
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertMessages(messages: List<MessageEntity>): List<Long>
+
+    @Update
+    suspend fun updateMessages(messages: List<MessageEntity>)
+
+    // ---- Choices ----
+    @Query("SELECT * FROM choices WHERE messageDbId = :messageDbId")
+    suspend fun getChoicesForMessageDb(messageDbId: Int): List<ChoiceEntity>
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertChoices(choices: List<ChoiceEntity>)
+
+    // ---- Progress ----
     @Query("SELECT * FROM user_progress WHERE storyId = :storyId LIMIT 1")
     suspend fun getProgress(storyId: Int): UserProgressEntity?
-
-    @Query("DELETE FROM user_progress WHERE storyId = :storyId")
-    suspend fun deleteProgressByStoryId(storyId: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveProgress(progress: UserProgressEntity)
 
-    @Insert
-    suspend fun insertStory(story: StoryEntity)
-
-    @Insert
-    suspend fun insertMessage(message: MessageEntity)
-
-    @Insert
-    suspend fun insertChoices(choices: ChoiceEntity)
-
-    @Insert
-    suspend fun insertUserProgress(userProgress: UserProgressEntity)
+    @Query("DELETE FROM user_progress WHERE storyId = :storyId")
+    suspend fun deleteProgressByStoryId(storyId: Int)
 }

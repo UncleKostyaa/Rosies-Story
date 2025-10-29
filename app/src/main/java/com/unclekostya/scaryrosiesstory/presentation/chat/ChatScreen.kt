@@ -47,13 +47,12 @@ fun ChatScreen(
             .fillMaxSize()
             .padding(8.dp),
     ) {
-
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ) {
-            items(uiState.messages.filterNotNull()) { item ->
+            items(uiState.messages) { item ->
                 BubbleMessage(item)
             }
         }

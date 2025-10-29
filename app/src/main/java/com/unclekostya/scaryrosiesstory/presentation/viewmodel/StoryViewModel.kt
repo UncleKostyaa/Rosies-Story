@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class ChatUiState(
-    val messages: List<MessageEntity?> = emptyList(),
+    val messages: List<MessageEntity> = emptyList(),
     val choices: List<ChoiceEntity> = emptyList(),
     val currentStoryId: Int? = null,
     val isLoading: Boolean = false,
@@ -28,37 +28,38 @@ class StoryViewModel(
     fun loadStory(storyId: Int) {
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true)
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
                 val progress = repository.getUserProgress(storyId)
-                var currentMessageId = progress?.currentMessageId ?: 1
+                val startMessage: MessageEntity? = when (val dbId = progress?.currentMessageDbId) {
+                    null -> repository.getMessageByLocalId(storyId, 1)
+                    else -> repository.getMessageByDbId(storyId, dbId)
+                }
+
                 val messages = mutableListOf<MessageEntity>()
                 var choices: List<ChoiceEntity> = emptyList()
 
-                while (true) {
-                    val message =
-                        repository.getMessage(storyId = storyId, messageId = currentMessageId)
-                    if (message == null) break
-
-                    messages += message
-
-                    choices = repository.getChoicesForMessage(currentMessageId)
+                var current: MessageEntity? = startMessage
+                while (current != null) {
+                    messages += current
+                    choices = repository.getChoicesForMessageDb(current.id)
                     if (choices.isNotEmpty()) break
-
-                    val nextMessageId = message.nextMessageId
-                    if(nextMessageId == null) break
-                    currentMessageId = nextMessageId
+                    current = current.nextMessageDbId?.let { nextDbId ->
+                        repository.getMessageByDbId(storyId, nextDbId)
+                    }
                 }
+
                 _uiState.value = ChatUiState(
                     messages = messages,
                     choices = choices,
                     currentStoryId = storyId,
-                    isLoading = false
+                    isLoading = false,
+                    errorMessage = null
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = e.message
+                    errorMessage = e.message ?: "Unknown error"
                 )
             }
         }
@@ -71,16 +72,19 @@ class StoryViewModel(
                 repository.saveProgress(
                     UserProgressEntity(
                         storyId = storyId,
-                        currentMessageId = choice.nextMessageId,
-                        lastChoiceId = choice.Id
+                        currentMessageDbId = choice.nextMessageDbId,
+                        lastChoiceDbId = choice.id
                     )
                 )
 
-                val nextMessage = repository.getMessage(storyId, choice.nextMessageId)
-                val newChoices = repository.getChoicesForMessage(choice.nextMessageId)
+                val nextMessage = choice.nextMessageDbId?.let {
+                    repository.getMessageByDbId(storyId, it)
+                }
+
+                val newChoices = nextMessage?.let { repository.getChoicesForMessageDb(it.id) } ?: emptyList()
 
                 _uiState.value = _uiState.value.copy(
-                    messages = _uiState.value.messages + nextMessage,
+                    messages = if (nextMessage != null) _uiState.value.messages + nextMessage else _uiState.value.messages,
                     choices = newChoices
                 )
             } catch (e: Exception) {
@@ -95,12 +99,8 @@ class StoryViewModel(
                 repository.deleteUserProgress(storyId)
                 _uiState.value = ChatUiState()
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message
-                )
+                _uiState.value = _uiState.value.copy(errorMessage = e.message)
             }
         }
-
-
     }
 }

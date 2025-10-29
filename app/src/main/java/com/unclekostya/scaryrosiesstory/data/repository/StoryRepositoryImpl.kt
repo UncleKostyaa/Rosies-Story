@@ -1,56 +1,40 @@
 package com.unclekostya.scaryrosiesstory.data.repository
 
 import com.unclekostya.scaryrosiesstory.data.local.dao.StoryDao
-import com.unclekostya.scaryrosiesstory.data.local.entity.ChoiceEntity
-import com.unclekostya.scaryrosiesstory.data.local.entity.MessageEntity
-import com.unclekostya.scaryrosiesstory.data.local.entity.StoryEntity
-import com.unclekostya.scaryrosiesstory.data.local.entity.UserProgressEntity
+import com.unclekostya.scaryrosiesstory.data.local.entity.*
 
 class StoryRepositoryImpl(private val storyDao: StoryDao) : StoryRepository {
 
-    override suspend fun getAllStories(): List<StoryEntity> {
-        return storyDao.getAllStories()
-    }
+    override suspend fun getAllStories(): List<StoryEntity> =
+        storyDao.getAllStories()
 
-    override suspend fun getMessage(
-        storyId: Int,
-        messageId: Int
-    ): MessageEntity {
-        return storyDao.getMessage(
-            storyId = storyId,
-            messageId = messageId
-        )
-    }
+    override suspend fun getMessageByDbId(storyId: Int, messageDbId: Int): MessageEntity? =
+        storyDao.getMessageByDbId(storyId, messageDbId)
 
-    override suspend fun getChoicesForMessage(messageId: Int): List<ChoiceEntity> {
-        return storyDao.getChoicesForMessage(messageId = messageId)
-    }
+    override suspend fun getMessageByLocalId(storyId: Int, localId: Int): MessageEntity? =
+        storyDao.getMessageByLocalId(storyId, localId)
 
-    override suspend fun getUserProgress(storyId: Int): UserProgressEntity? {
-        return storyDao.getProgress(storyId = storyId)
-    }
+    override suspend fun getChoicesForMessageDb(messageDbId: Int): List<ChoiceEntity> =
+        storyDao.getChoicesForMessageDb(messageDbId)
 
-    override suspend fun saveProgress(progress: UserProgressEntity) {
-        return  storyDao.saveProgress(progress = progress)
-    }
+    override suspend fun getUserProgress(storyId: Int): UserProgressEntity? =
+        storyDao.getProgress(storyId)
 
-    override suspend fun insertStory(story: StoryEntity) {
-        return storyDao.insertStory(story = story)
-    }
+    override suspend fun saveProgress(progress: UserProgressEntity) =
+        storyDao.saveProgress(progress)
 
-    override suspend fun insertMessage(message: MessageEntity) {
-        return  storyDao.insertMessage(message = message)
-    }
+    override suspend fun deleteUserProgress(storyId: Int) =
+        storyDao.deleteProgressByStoryId(storyId)
 
-    override suspend fun insertChoices(choices: ChoiceEntity) {
-        return storyDao.insertChoices(choices = choices)
-    }
+    override suspend fun insertStory(story: StoryEntity): Long =
+        storyDao.insertStory(story)
 
-    override suspend fun insertUserProgress(userProgress: UserProgressEntity) {
-        return storyDao.insertUserProgress(userProgress = userProgress)
-    }
+    override suspend fun insertMessages(messages: List<MessageEntity>): List<Int> =
+        storyDao.insertMessages(messages).map { it.toInt() }
 
-    override  suspend fun deleteUserProgress(storyId: Int) {
-        return storyDao.deleteProgressByStoryId(storyId)
-    }
+    override suspend fun updateMessages(messages: List<MessageEntity>) =
+        storyDao.updateMessages(messages)
+
+    override suspend fun insertChoices(choices: List<ChoiceEntity>) =
+        storyDao.insertChoices(choices)
 }
