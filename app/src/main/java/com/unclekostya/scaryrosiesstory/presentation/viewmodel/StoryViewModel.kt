@@ -64,7 +64,22 @@ class StoryViewModel(
                 } ?: mutableListOf()
 
                 val lastMessage = shownMessages.lastOrNull()
-                    ?: repository.getMessageByLocalId(storyId, 1)
+                val startMessage = when {
+                    lastMessage == null -> repository.getMessageByLocalId(storyId, 1)
+
+                    lastMessage.sender == "player" && lastMessage.nextMessageLocalId != null ->
+                        repository.getMessageByLocalId(storyId, lastMessage.nextMessageLocalId)
+
+                    lastMessage.sender != "player" -> {
+                        val choices = repository.getChoicesForMessageLocalId(storyId, lastMessage.localId)
+                        if (choices.isNotEmpty()) null
+                        else lastMessage.nextMessageLocalId?.let {
+                            repository.getMessageByLocalId(storyId, it)
+                        }
+                    }
+
+                    else -> null
+                }
 
                 _uiState.value = ChatUiState(
                     currentStoryId = storyId,
@@ -73,8 +88,17 @@ class StoryViewModel(
                     isLoading = false
                 )
 
-                if (lastMessage != null)
-                    advanceStoryFrom(storyId, lastMessage, shownMessages)
+                if (startMessage != null) {
+                    advanceStoryFrom(storyId, startMessage, shownMessages)
+                } else {
+                    val last = lastMessage
+                    if (last != null) {
+                        val existingChoices = repository.getChoicesForMessageLocalId(storyId, last.localId)
+                        if (existingChoices.isNotEmpty()) {
+                            _uiState.value = _uiState.value.copy(choices = existingChoices)
+                        }
+                    }
+                }
 
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -84,6 +108,7 @@ class StoryViewModel(
             }
         }
     }
+
 
     fun sendPendingPlayerMessage() {
         viewModelScope.launch {
