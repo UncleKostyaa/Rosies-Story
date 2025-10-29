@@ -8,14 +8,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +34,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -92,7 +97,12 @@ fun StoryCard(
     storyViewModel: StoryViewModel,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    ElevatedCard(
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.LightGray
+        ),
         modifier = modifier
             .padding(6.dp),
         onClick = {
@@ -100,56 +110,56 @@ fun StoryCard(
             navController.navigate("chat/$id")
         }
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Start
-        ) {
-            val context = LocalContext.current
-            val assetManager = context.assets
+        Column(modifier = Modifier.padding(12.dp)) {
 
-            val imgBitmap = try {
-                val inputStream = assetManager.open("covers/${File(coverPath).name}")
-                BitmapFactory.decodeStream(inputStream)
-            } catch (e: Exception) {
-                null
+            Row {
+                val context = LocalContext.current
+                val assetManager = context.assets
+                val imgBitmap = try {
+                    val inputStream = assetManager.open("covers/${File(coverPath).name}")
+                    BitmapFactory.decodeStream(inputStream)
+                } catch (e: Exception) {
+                    null
+                }
+                imgBitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = title,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                Column(modifier = Modifier
+                    .padding(start = 8.dp)
+                    .weight(1f)
+                ) {
+                    Text(
+                        text = title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
-            imgBitmap?.let {
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = title,
-                    modifier = modifier
-                        .padding(8.dp)
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(20.dp)),
-                    contentScale = ContentScale.Crop
-                )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(
+                    onClick = { storyViewModel.resetStory(id) }
+                ) {
+                    Text("Delete progress")
+                }
             }
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = modifier
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize =  20.sp,
-                    modifier = modifier
-                        .fillMaxWidth()
-                )
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = modifier
-                        .fillMaxWidth()
-                )
-            }
-        }
-        Button(
-            onClick = {
-                storyViewModel.resetStory(id)
-            }
-        ) {
-            Text("Delete progress")
         }
     }
-
 }

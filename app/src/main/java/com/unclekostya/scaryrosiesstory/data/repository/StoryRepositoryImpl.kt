@@ -14,8 +14,9 @@ class StoryRepositoryImpl(private val storyDao: StoryDao) : StoryRepository {
     override suspend fun getMessageByLocalId(storyId: Int, localId: Int): MessageEntity? =
         storyDao.getMessageByLocalId(storyId, localId)
 
-    override suspend fun getChoicesForMessageDb(messageDbId: Int): List<ChoiceEntity> =
-        storyDao.getChoicesForMessageDb(messageDbId)
+    override suspend fun getChoicesForMessageLocalId(storyId: Int, messageLocalId: Int): List<ChoiceEntity> =
+        storyDao.getChoicesForMessageLocalId(storyId, messageLocalId)
+
 
     override suspend fun getUserProgress(storyId: Int): UserProgressEntity? =
         storyDao.getProgress(storyId)

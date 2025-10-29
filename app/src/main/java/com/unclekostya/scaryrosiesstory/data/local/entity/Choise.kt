@@ -5,21 +5,14 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-
 @Entity(
     tableName = "choices",
-    indices = [Index(value = ["storyId", "messageDbId"])],
+    indices = [Index(value = ["storyId", "messageLocalId"])],
     foreignKeys = [
         ForeignKey(
             entity = StoryEntity::class,
             parentColumns = ["id"],
             childColumns = ["storyId"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = MessageEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["messageDbId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -27,8 +20,7 @@ import androidx.room.PrimaryKey
 data class ChoiceEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val storyId: Int,
-    val messageDbId: Int,
     val messageLocalId: Int,
     val text: String,
-    val nextMessageDbId: Int? = null
+    val nextMessageLocalId: Int? = null
 )

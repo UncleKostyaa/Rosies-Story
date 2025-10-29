@@ -46,6 +46,7 @@ import com.unclekostya.scaryrosiesstory.R
 import com.unclekostya.scaryrosiesstory.data.local.database.StoryDatabase
 import com.unclekostya.scaryrosiesstory.data.repository.StoryRepository
 import com.unclekostya.scaryrosiesstory.data.repository.StoryRepositoryImpl
+import com.unclekostya.scaryrosiesstory.presentation.chat.ChatTopBar
 import com.unclekostya.scaryrosiesstory.presentation.navigation.NavGraph
 import com.unclekostya.scaryrosiesstory.presentation.story.StoryViewModel
 import com.unclekostya.scaryrosiesstory.presentation.viewmodel.CatalogViewModel
@@ -82,12 +83,15 @@ class MainActivity : ComponentActivity() {
             //viewModel для ВСЕХ переписок
             val catalogViewModel: CatalogViewModel = viewModel(factory = CatalogViewModelFactory(repository))
 
-            val showTopBar = currentRoute != "chat"
+            //для смены title в ChatScreen
+            val isChat = currentRoute?.startsWith("chat") == true
+
+
 
             ScaryRosiesStoryTheme {
                 Scaffold(
                     topBar = {
-                        if(showTopBar) {
+                        if (!isChat) {
                             CenterAlignedTopAppBar(
                                 title = {
                                     Text(
@@ -102,7 +106,14 @@ class MainActivity : ComponentActivity() {
                                     titleContentColor = colorResource(R.color.white)
                                 )
                             )
+                        } else  {
+                            ChatTopBar(
+                                navController = navController,
+                                comfortaFamily = comfortaFamily,
+                                storyViewModel = storyViewModel
+                            )
                         }
+
                     },
                     bottomBar = {
                         BottomAppBar (

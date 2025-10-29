@@ -13,28 +13,32 @@
           "storyId": 1,
           "sender": "rosie",
           "text": "Hey... are you still awake?",
-          "nextMessageId": 2
+          "nextMessageId": 2,
+          "senderImagePath": "pfp/rosie.png"
         },
         {
           "id": 2,
           "storyId": 1,
           "sender": "player",
           "text": "Who is this?",
-          "nextMessageId": 3
+          "nextMessageId": 3,
+          "senderImagePath": "pfp/player.png"
         },
         {
           "id": 3,
           "storyId": 1,
           "sender": "rosie",
           "text": "It’s Rosie... something’s outside my window.",
-          "nextMessageId": null
+          "nextMessageId": null,
+          "senderImagePath": "pfp/rosie.png"
         },
         {
           "id": 4,
           "storyId": 1,
           "sender": "player",
           "text": "What should I do?",
-          "nextMessageId": null
+          "nextMessageId": null,
+          "senderImagePath": "pfp/player.png"
         }
       ],
       "choices": [
@@ -70,42 +74,48 @@
           "storyId": 2,
           "sender": "unknown",
           "text": "…Can you hear me?",
-          "nextMessageId": 2
+          "nextMessageId": 2,
+          "senderImagePath": "pfp/unknown.png"
         },
         {
           "id": 2,
           "storyId": 2,
           "sender": "player",
           "text": "Who is this?",
-          "nextMessageId": 3
+          "nextMessageId": 3,
+          "senderImagePath": "pfp/player.png"
         },
         {
           "id": 3,
           "storyId": 2,
           "sender": "unknown",
           "text": "Don’t hang up. They’ll know where you are.",
-          "nextMessageId": 4
+          "nextMessageId": 4,
+          "senderImagePath": "pfp/unknown.png"
         },
         {
           "id": 4,
           "storyId": 2,
           "sender": "player",
           "text": "What are you talking about?",
-          "nextMessageId": 5
+          "nextMessageId": 5,
+          "senderImagePath": "pfp/player.png"
         },
         {
           "id": 5,
           "storyId": 2,
           "sender": "unknown",
           "text": "Look outside your window. Tell me what you see.",
-          "nextMessageId": null
+          "nextMessageId": null,
+          "senderImagePath": "pfp/unknown.png"
         },
         {
           "id": 6,
           "storyId": 2,
           "sender": "player",
           "text": "I see… someone standing there.",
-          "nextMessageId": null
+          "nextMessageId": null,
+          "senderImagePath": "pfp/player.png"
         }
       ],
       "choices": [
@@ -128,6 +138,5 @@
         "lastChoiceId": null
       }
     }
-
   ]
 }

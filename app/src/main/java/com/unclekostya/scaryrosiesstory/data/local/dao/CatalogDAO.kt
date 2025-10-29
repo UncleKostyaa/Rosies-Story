@@ -6,15 +6,13 @@ import com.unclekostya.scaryrosiesstory.data.local.entity.*
 @Dao
 interface StoryDao {
 
-    // ---- Stories ----
     @Query("SELECT * FROM stories")
     suspend fun getAllStories(): List<StoryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStory(story: StoryEntity): Long
 
-    // ---- Messages ----
-    @Query("SELECT * FROM messages WHERE id = :messageDbId AND storyId = :storyId LIMIT 1")
+    @Query("SELECT * FROM messages WHERE storyId = :storyId AND id = :messageDbId LIMIT 1")
     suspend fun getMessageByDbId(storyId: Int, messageDbId: Int): MessageEntity?
 
     @Query("SELECT * FROM messages WHERE storyId = :storyId AND localId = :localId LIMIT 1")
@@ -23,17 +21,14 @@ interface StoryDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertMessages(messages: List<MessageEntity>): List<Long>
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateMessages(messages: List<MessageEntity>)
 
-    // ---- Choices ----
-    @Query("SELECT * FROM choices WHERE messageDbId = :messageDbId")
-    suspend fun getChoicesForMessageDb(messageDbId: Int): List<ChoiceEntity>
-
+    @Query("SELECT * FROM choices WHERE storyId = :storyId AND messageLocalId = :messageLocalId")
+    suspend fun getChoicesForMessageLocalId(storyId: Int, messageLocalId: Int): List<ChoiceEntity>
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertChoices(choices: List<ChoiceEntity>)
 
-    // ---- Progress ----
     @Query("SELECT * FROM user_progress WHERE storyId = :storyId LIMIT 1")
     suspend fun getProgress(storyId: Int): UserProgressEntity?
 

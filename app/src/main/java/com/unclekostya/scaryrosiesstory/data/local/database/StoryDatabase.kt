@@ -72,70 +72,53 @@ suspend fun prePopulateStory(context: Context, storyDao: StoryDao) {
                     coverPath = storyJson.getString("coverPath")
                 )
             ).toInt()
-
-            val stage1 = buildList {
+            val messages = buildList {
                 for (i in 0 until messagesArray.length()) {
                     val m = messagesArray.getJSONObject(i)
+                    val nextLocal =
+                        if (m.has("nextMessageId") && !m.isNull("nextMessageId")) m.getInt("nextMessageId")
+                        else null
+
                     add(
                         MessageEntity(
                             storyId = storyDbId,
                             localId = m.getInt("id"),
                             sender = m.getString("sender"),
                             text = m.getString("text"),
-                            nextMessageDbId = null
+                            senderImagePath = m.getString("senderImagePath"),
+                            nextMessageLocalId = nextLocal
                         )
                     )
                 }
             }
-            val insertedDbIds = storyDao.insertMessages(stage1)
-            val localToDb = stage1.mapIndexed { idx, msg ->
-                msg.localId to insertedDbIds[idx].toInt()
-            }.toMap()
-
-            val stage2 = buildList {
-                for (i in 0 until messagesArray.length()) {
-                    val m = messagesArray.getJSONObject(i)
-                    val localId = m.getInt("id")
-                    val dbId = localToDb.getValue(localId)
-                    val nextLocal = m.optInt("nextMessageId", 0).takeIf { it != 0 }
-                    val nextDb = nextLocal?.let { localToDb[it] }
-                    add(
-                        MessageEntity(
-                            id = dbId,
-                            storyId = storyDbId,
-                            localId = localId,
-                            sender = m.getString("sender"),
-                            text = m.getString("text"),
-                            nextMessageDbId = nextDb
-                        )
-                    )
-                }
-            }
-            storyDao.updateMessages(stage2)
-
+            storyDao.insertMessages(messages)
+            Log.d("DB", "Inserted ${messages.size} messages for story#$storyDbId")
             val choiceEntities = buildList {
                 for (i in 0 until choicesArray.length()) {
                     val c = choicesArray.getJSONObject(i)
                     val messageLocalId = c.getInt("messageId")
-                    val messageDbId = localToDb.getValue(messageLocalId)
-                    val nextLocal = c.optInt("nextMessageId", 0).takeIf { it != 0 }
-                    val nextDb = nextLocal?.let { localToDb[it] }
+
+                    val nextLocal =
+                        if (c.has("nextMessageId") && !c.isNull("nextMessageId"))
+                            c.getInt("nextMessageId")
+                        else null
 
                     add(
                         ChoiceEntity(
                             storyId = storyDbId,
-                            messageDbId = messageDbId,
                             messageLocalId = messageLocalId,
                             text = c.getString("text"),
-                            nextMessageDbId = nextDb
+                            nextMessageLocalId = nextLocal
                         )
                     )
                 }
             }
             storyDao.insertChoices(choiceEntities)
-
-            Log.d("DB", "Inserted story#$storyDbId: ${stage1.size} messages, ${choiceEntities.size} choices")
+            Log.d("DB", "Inserted ${choiceEntities.size} choices for story#$storyDbId")
         }
+
+        Log.d("DB", "Prepopulate finished successfully!")
+
     } catch (e: Exception) {
         Log.e("DB", "Error while prepopulating DB: ${e.message}", e)
     }

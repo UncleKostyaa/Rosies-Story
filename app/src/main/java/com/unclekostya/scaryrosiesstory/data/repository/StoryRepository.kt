@@ -8,7 +8,7 @@ interface StoryRepository {
     suspend fun getMessageByDbId(storyId: Int, messageDbId: Int): MessageEntity?
     suspend fun getMessageByLocalId(storyId: Int, localId: Int): MessageEntity?
 
-    suspend fun getChoicesForMessageDb(messageDbId: Int): List<ChoiceEntity>
+    suspend fun getChoicesForMessageLocalId(storyId: Int, messageLocalId: Int): List<ChoiceEntity>
 
     suspend fun getUserProgress(storyId: Int): UserProgressEntity?
     suspend fun saveProgress(progress: UserProgressEntity)

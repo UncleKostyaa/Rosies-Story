@@ -22,6 +22,7 @@ data class MessageEntity(
     val storyId: Int,
     val localId: Int,
     val sender: String,
+    val senderImagePath: String,
     val text: String,
-    val nextMessageDbId: Int? = null
+    val nextMessageLocalId: Int? = null
 )
