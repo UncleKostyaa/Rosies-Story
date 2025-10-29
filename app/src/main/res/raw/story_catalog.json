@@ -57,7 +57,7 @@
       ],
       "userProgress": {
         "storyId": 1,
-        "currentMessageId": 1,
+        "currentMessageList": [],
         "lastChoiceId": null
       }
     },
@@ -134,7 +134,7 @@
       ],
       "userProgress": {
         "storyId": 2,
-        "currentMessageId": 1,
+        "currentMessageList": [],
         "lastChoiceId": null
       }
     }

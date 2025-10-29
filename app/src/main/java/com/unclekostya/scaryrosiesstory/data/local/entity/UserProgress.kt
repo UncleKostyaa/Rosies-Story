@@ -13,24 +13,12 @@ import androidx.room.PrimaryKey
             parentColumns = ["id"],
             childColumns = ["storyId"],
             onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = MessageEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["currentMessageDbId"],
-            onDelete = ForeignKey.SET_NULL
-        ),
-        ForeignKey(
-            entity = ChoiceEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["lastChoiceDbId"],
-            onDelete = ForeignKey.SET_NULL
         )
     ],
-    indices = [Index("storyId"), Index("currentMessageDbId"), Index("lastChoiceDbId")]
+    indices = [Index("storyId")]
 )
 data class UserProgressEntity(
     @PrimaryKey val storyId: Int,
-    val currentMessageDbId: Int?,
-    val lastChoiceDbId: Int?
+    val seenMessagesJson: String,
+    val lastChoiceId: Int? = null
 )

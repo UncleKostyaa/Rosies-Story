@@ -2,6 +2,9 @@ package com.unclekostya.scaryrosiesstory.presentation.story
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.TypeConverter
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import com.unclekostya.scaryrosiesstory.data.local.entity.ChoiceEntity
 import com.unclekostya.scaryrosiesstory.data.local.entity.MessageEntity
 import com.unclekostya.scaryrosiesstory.data.local.entity.UserProgressEntity
@@ -22,10 +25,27 @@ data class ChatUiState(
     val errorMessage: String? = null
 )
 
+class Converters {
+    private val gson = Gson()
+
+    @TypeConverter
+    fun fromMessageList(messages: List<MessageEntity>?): String {
+        return gson.toJson(messages)
+    }
+
+    @TypeConverter
+    fun toMessageList(data: String?): List<MessageEntity> {
+        if (data.isNullOrEmpty()) return emptyList()
+        val type = object : TypeToken<List<MessageEntity>>() {}.type
+        return gson.fromJson(data, type)
+    }
+}
+
 class StoryViewModel(
     private val repository: StoryRepository
 ) : ViewModel() {
 
+    private val gson = Gson()
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState
 
@@ -39,18 +59,22 @@ class StoryViewModel(
                     ?.title ?: "Chat"
 
                 val progress = repository.getUserProgress(storyId)
-                val start = when (val localId = progress?.currentMessageDbId) {
-                    null -> repository.getMessageByLocalId(storyId, 1)
-                    else -> repository.getMessageByLocalId(storyId, localId)
-                } ?: return@launch
+                val shownMessages = progress?.let {
+                    gson.fromJson(it.seenMessagesJson, Array<MessageEntity>::class.java).toMutableList()
+                } ?: mutableListOf()
+
+                val lastMessage = shownMessages.lastOrNull()
+                    ?: repository.getMessageByLocalId(storyId, 1)
 
                 _uiState.value = ChatUiState(
                     currentStoryId = storyId,
                     storyTitle = storyTitle,
+                    messages = shownMessages,
                     isLoading = false
                 )
 
-                advanceStoryFrom(storyId, start)
+                if (lastMessage != null)
+                    advanceStoryFrom(storyId, lastMessage, shownMessages)
 
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -74,7 +98,7 @@ class StoryViewModel(
                 choices = emptyList()
             )
 
-            repository.saveProgress(UserProgressEntity(id, msg.localId, null))
+            saveProgress(id, updated, null)
 
             msg.nextMessageLocalId?.let { nextId ->
                 repository.getMessageByLocalId(id, nextId)?.let { nextMsg ->
@@ -89,11 +113,12 @@ class StoryViewModel(
             val s = _uiState.value
             val id = s.currentStoryId ?: return@launch
 
-            repository.saveProgress(UserProgressEntity(id, choice.nextMessageLocalId, choice.id))
+            val updatedMessages = s.messages.toMutableList()
+            saveProgress(id, updatedMessages, choice.id)
 
             choice.nextMessageLocalId?.let { nextId ->
                 repository.getMessageByLocalId(id, nextId)?.let { nextMsg ->
-                    advanceStoryFrom(id, nextMsg)
+                    advanceStoryFrom(id, nextMsg, updatedMessages)
                 }
             }
         }
@@ -134,6 +159,8 @@ class StoryViewModel(
             typingMessage = null,
             isLoading = false
         )
+
+        saveProgress(storyId, shownMessages, null)
     }
 
     private suspend fun simulateTyping(
@@ -154,6 +181,12 @@ class StoryViewModel(
         delay(200)
         shown += message
         _uiState.value = _uiState.value.copy(messages = shown, typingMessage = null)
+    }
+
+    private suspend fun saveProgress(storyId: Int, messages: List<MessageEntity>, choiceId: Int?) {
+        val json = gson.toJson(messages)
+        val progress = UserProgressEntity(storyId, json, choiceId)
+        repository.saveProgress(progress)
     }
 
     fun resetStory(storyId: Int) {
